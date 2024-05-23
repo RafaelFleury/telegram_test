@@ -52,6 +52,6 @@ document.getElementById('userForm').addEventListener('submit', function(event) {
         address: address
     };
 
-    Telegram.WebApp.sendData(JSON.stringify(data)); // Envia os dados para o bot do Telegram
+    Telegram.WebApp.close(); // Envia os dados para o bot do Telegram
 });
 
