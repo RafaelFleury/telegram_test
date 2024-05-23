@@ -1,5 +1,4 @@
 window.Telegram.WebApp.ready();
-console.log(Telegram.WebApp.initData());
 
 const DemoApp = {
     initData      : Telegram.WebApp.initData || '',
@@ -53,6 +52,6 @@ document.getElementById('userForm').addEventListener('submit', function(event) {
         address: address
     };
 
-    Telegram.WebApp.close(); // Envia os dados para o bot do Telegram
+    Telegram.WebApp.sendData(JSON.stringify(data)); // Envia os dados para o bot do Telegram
 });
 
