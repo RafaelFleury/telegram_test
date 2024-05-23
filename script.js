@@ -1,4 +1,5 @@
 window.Telegram.WebApp.ready();
+console.log(Telegram.WebApp.initData());
 
 const DemoApp = {
     initData      : Telegram.WebApp.initData || '',
