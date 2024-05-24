@@ -49,7 +49,8 @@ document.getElementById('userForm').addEventListener('submit', function(event) {
     const data = {
         name: name,
         age: age,
-        address: address
+        address: address,
+        query_id: window.Telegram.WebApp.initDataUnsafe.query_id
     };
 
     Telegram.WebApp.sendData(JSON.stringify(data)); // Envia os dados para o bot do Telegram
