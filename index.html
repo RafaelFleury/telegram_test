@@ -3,59 +3,36 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Stripe Payment</title>
+    <title>Create Customer</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <div class="main-container">
-        <h1>Stripe Payment</h1>
-        <form id="payment-form">
-            <input type="number" name="amount" placeholder="Amount" required>
-            <input type="text" name="currency" placeholder="Currency (default: usd)">
-            <button type="submit">Pay</button>
+        <h1>Create Customer</h1>
+        <form id="customer-form">
+            <input type="text" name="name" placeholder="Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <button type="submit">Create</button>
         </form>
-        <div id="payment-message"></div>
+        <div id="response-message"></div>
     </div>
 
     <script>
-        document.getElementById('payment-form').addEventListener('submit', async function(event) {
-            event.preventDefault();
+        document.getElementById('customer-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
 
+            // Get form data
             const formData = new FormData(event.target);
             const data = {
-                amount: formData.get('amount'),
-                currency: formData.get('currency') || 'usd'
+                name: formData.get('name'),
+                email: formData.get('email')
             };
 
             // Send data to Telegram bot
             Telegram.WebApp.sendData(JSON.stringify(data));
 
-            // Simulate receiving the client secret from the bot response
-            Telegram.WebApp.onEvent('message', function(event) {
-                const message = event.data;
-                if (message.text.includes("Client secret")) {
-                    const clientSecret = message.text.split(": ")[1];
-
-                    // Initialize Stripe and complete the payment
-                    const stripe = Stripe('pk_test_51PL8NXBLOKCZmo0IBML73a3y75A2kYYpXVNJ1tBeuDOxoj5TjHeFJ77MOIhDJQk4UXroHtdrq6hEzVS784yaAm8h00ukWEa4Rb');
-                    stripe.confirmCardPayment(clientSecret, {
-                        payment_method: {
-                            card: {
-                                // Create a card element and collect card details
-                            }
-                        }
-                    }).then(function(result) {
-                        if (result.error) {
-                            document.getElementById('payment-message').textContent = result.error.message;
-                        } else {
-                            document.getElementById('payment-message').textContent = 'Payment successful!';
-                        }
-                    });
-                }
-            });
-
-            document.getElementById('payment-message').textContent = 'Processing payment...';
+            // Display a response message
+            document.getElementById('response-message').textContent = 'Data sent successfully!';
         });
     </script>
 </body>
