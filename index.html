@@ -3,38 +3,59 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Formulário de Cadastro</title>
-    <script src="https://telegram.org/js/telegram-web-app.js?1"></script>
+    <title>Stripe Payment</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
     <div class="main-container">
-        <h1>Cadastro1</h1>
-        <form id="registration-form" method="post">
-            <input type="text" name="name" placeholder="Nome" required>
-            <input type="text" name="age" placeholder="Idade" required>
-            <input type="text" name="address" placeholder="Endereço" required>
-            <button type="submit">Enviar</button>
+        <h1>Stripe Payment</h1>
+        <form id="payment-form">
+            <input type="number" name="amount" placeholder="Amount" required>
+            <input type="text" name="currency" placeholder="Currency (default: usd)">
+            <button type="submit">Pay</button>
         </form>
-        <div id="response-message"></div>
+        <div id="payment-message"></div>
     </div>
 
     <script>
-        document.getElementById('registration-form').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent default form submission
+        document.getElementById('payment-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
 
-            // Get form data
             const formData = new FormData(event.target);
             const data = {
-                name: formData.get('name'),
-                age: formData.get('age'),
-                address: formData.get('address')
+                amount: formData.get('amount'),
+                currency: formData.get('currency') || 'usd'
             };
 
             // Send data to Telegram bot
             Telegram.WebApp.sendData(JSON.stringify(data));
 
-            // Display a response message
-            document.getElementById('response-message').textContent = 'Dados enviados com sucesso!';
+            // Simulate receiving the client secret from the bot response
+            Telegram.WebApp.onEvent('message', function(event) {
+                const message = event.data;
+                if (message.text.includes("Client secret")) {
+                    const clientSecret = message.text.split(": ")[1];
+
+                    // Initialize Stripe and complete the payment
+                    const stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY');
+                    stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: {
+                                // Create a card element and collect card details
+                            }
+                        }
+                    }).then(function(result) {
+                        if (result.error) {
+                            document.getElementById('payment-message').textContent = result.error.message;
+                        } else {
+                            document.getElementById('payment-message').textContent = 'Payment successful!';
+                        }
+                    });
+                }
+            });
+
+            document.getElementById('payment-message').textContent = 'Processing payment...';
         });
     </script>
 </body>
