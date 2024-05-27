@@ -38,7 +38,7 @@
                     const clientSecret = message.text.split(": ")[1];
 
                     // Initialize Stripe and complete the payment
-                    const stripe = Stripe('YOUR_STRIPE_PUBLIC_KEY');
+                    const stripe = Stripe('pk_test_51PL8NXBLOKCZmo0IBML73a3y75A2kYYpXVNJ1tBeuDOxoj5TjHeFJ77MOIhDJQk4UXroHtdrq6hEzVS784yaAm8h00ukWEa4Rb');
                     stripe.confirmCardPayment(clientSecret, {
                         payment_method: {
                             card: {
