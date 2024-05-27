@@ -31,22 +31,15 @@ document.addEventListener('DOMContentLoaded', (event) => {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
         const formData = new FormData(form);
-        
-        const user = Telegram.WebApp.initDataUnsafe.user;
-        
-        if (user && user.id) {
-            const data = {
-                user_id: user.id,
-                name: formData.get('name'),
-                age: formData.get('age'),
-                address: formData.get('address')
-            };
+    
+        const data = {
+            user_id: user.id,
+            name: formData.get('name'),
+            age: formData.get('age'),
+            address: formData.get('address')
+        };
 
-            Telegram.WebApp.sendData("Cadastro realizado com sucesso!");
-        } else {
-            console.error('User data is not available');
-            alert('Erro ao obter dados do usuário. Por favor, tente novamente.');
-        }
+        Telegram.WebApp.sendData("Cadastro realizado com sucesso!");
     });
 });
 
