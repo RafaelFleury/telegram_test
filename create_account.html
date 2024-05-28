@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+    <h1>Create Account</h1>
+    <form id="account-form">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <button type="submit">Create Account</button>
+    </form>
+    <script>
+        document.getElementById('account-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const data = {
+                context: "account_creation",
+                name: formData.get('name'),
+                email: formData.get('email')
+            };
+            Telegram.WebApp.sendData(JSON.stringify(data));
+        });
+    </script>
+</body>
+
+</html>

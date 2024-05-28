@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <h1>Payment</h1>
+    <form id="payment-form">
+        <div id="card-element"><!-- Stripe.js injects the Card Element --></div>
+        <button type="submit">Pay</button>
+    </form>
+    <div id="payment-message"></div>
+    <script>
+        const stripe = Stripe('pk_test_51P8VP408J7cnO17rmOtusGPVIfIlNFISjspxl5CN7QFxEm25PNm9LW24Cnl4sbA9It1AgXV2pk514tfHvQsT8NDB00DBY4AliM');
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        Telegram.WebApp.onEvent('message', async function(event) {
+            const message = event.data;
+            if (message.text.includes("Client secret")) {
+                const clientSecret = message.text.split(": ")[1];
+                document.getElementById('payment-form').addEventListener('submit', async function(event) {
+                    event.preventDefault();
+                    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: cardElement,
+                        }
+                    });
+                    if (error) {
+                        document.getElementById('payment-message').textContent = `Payment failed: ${error.message}`;
+                    } else if (paymentIntent.status === 'succeeded') {
+                        document.getElementById('payment-message').textContent = 'Payment successful!';
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
