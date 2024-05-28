@@ -15,28 +15,37 @@
     </form>
     <div id="payment-message"></div>
     <script>
-        const stripe = Stripe('pk_test_51P8VP408J7cnO17rmOtusGPVIfIlNFISjspxl5CN7QFxEm25PNm9LW24Cnl4sbA9It1AgXV2pk514tfHvQsT8NDB00DBY4AliM');
+        const stripe = Stripe('YOUR_STRIPE_PUBLISHABLE_KEY'); // Replace with your Stripe publishable key
         const elements = stripe.elements();
         const cardElement = elements.create('card');
         cardElement.mount('#card-element');
 
-        Telegram.WebApp.onEvent('message', async function(event) {
-            const message = event.data;
-            if (message.text.includes("Client secret")) {
-                const clientSecret = message.text.split(": ")[1];
-                document.getElementById('payment-form').addEventListener('submit', async function(event) {
-                    event.preventDefault();
-                    const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-                        payment_method: {
-                            card: cardElement,
-                        }
-                    });
-                    if (error) {
-                        document.getElementById('payment-message').textContent = `Payment failed: ${error.message}`;
-                    } else if (paymentIntent.status === 'succeeded') {
-                        document.getElementById('payment-message').textContent = 'Payment successful!';
-                    }
-                });
+        // Function to get query parameters from URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Get the client secret from the URL
+        const clientSecret = getQueryParam('client_secret');
+        console.log("Client secret received from URL:", clientSecret); // Debug log
+
+        document.getElementById('payment-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            console.log("Form submitted"); // Debug log
+
+            const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: cardElement,
+                }
+            });
+
+            if (error) {
+                document.getElementById('payment-message').textContent = `Payment failed: ${error.message}`;
+                console.error("Payment failed:", error); // Debug log
+            } else if (paymentIntent.status === 'succeeded') {
+                document.getElementById('payment-message').textContent = 'Payment successful!';
+                console.log("Payment successful:", paymentIntent); // Debug log
             }
         });
     </script>
